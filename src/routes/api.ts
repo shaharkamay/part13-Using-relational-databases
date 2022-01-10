@@ -1,9 +1,8 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import blogRouter from './blog';
 
 const router = express.Router();
 
-router.get('/ping', (_req: Request, res: Response) => {
-  res.send('pong');
-});
+router.use('/blogs', blogRouter);
 
 export default router;
