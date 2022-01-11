@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { blogService, userService } from '../services';
 
-const getAllBlogs = async (_req: Request, res: Response) => {
-  const blogs = await blogService.getAllBlogs();
+const getAllBlogs = async (req: Request, res: Response) => {
+  const { search } = req.query;
+  const blogs = await blogService.getAllBlogs(search as string | undefined);
   res.json(blogs);
 };
 

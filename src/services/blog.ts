@@ -1,13 +1,28 @@
 import { Blog, User } from '../models';
 import { NewBlog } from '../@types/blog';
+import { Op } from 'sequelize';
 
-const getAllBlogs = async () => {
+const getAllBlogs = async (search: string | null = null) => {
+  const where = {} as {
+    [Op.or]: [
+      { title: { [Op.iLike]: string } },
+      { author: { [Op.iLike]: string } }
+    ];
+  };
+  if (search) {
+    where[Op.or] = [
+      { title: { [Op.iLike]: `%${search}%` } },
+      { author: { [Op.iLike]: `%${search}%` } },
+    ];
+  }
   const blogs = await Blog.findAll({
     attributes: { exclude: ['userId'] },
     include: {
       model: User,
       attributes: ['name'],
     },
+    where,
+    order: [['likes', 'DESC']],
   });
   return blogs;
 };
