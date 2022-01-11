@@ -21,9 +21,16 @@ const deleteBlog = async (blog: Blog): Promise<boolean> => {
   return true;
 };
 
+const updateLikes = async (blog: Blog, likes: number): Promise<boolean> => {
+  blog.set('likes', likes);
+  await blog.save();
+  return true;
+};
+
 export default {
   getAllBlogs,
   addBlog,
   getBlogById,
   deleteBlog,
+  updateLikes,
 };
