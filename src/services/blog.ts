@@ -1,6 +1,7 @@
 import { Blog, User } from '../models';
 import { NewBlog } from '../@types/blog';
 import { Op } from 'sequelize';
+import sequelize from '../utils/db';
 
 const getAllBlogs = async (search: string | null = null) => {
   const where = {} as {
@@ -48,10 +49,24 @@ const updateLikes = async (blog: Blog, likes: number): Promise<boolean> => {
   return true;
 };
 
+const getAllAuthors = async () => {
+  const authors = await Blog.findAll({
+    group: 'author',
+    attributes: [
+      'author',
+      [sequelize.fn('COUNT', 'author'), 'articles'],
+      [sequelize.fn('SUM', sequelize.col('likes')), 'totalLikes'],
+    ],
+    order: [[sequelize.fn('MAX', sequelize.col('likes')), 'DESC']],
+  });
+  return authors;
+};
+
 export default {
   getAllBlogs,
   addBlog,
   getBlogById,
   deleteBlog,
   updateLikes,
+  getAllAuthors,
 };
