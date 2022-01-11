@@ -1,6 +1,6 @@
-import config from './utils/config/config';
+import config from './utils/config';
 import app from './app';
-import { connect } from './utils/db/connection';
+import { connect } from './utils/db';
 
 (async () => {
   await connect();

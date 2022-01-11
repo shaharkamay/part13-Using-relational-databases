@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { blogService } from '../services';
+import { blogService, userService } from '../services';
 
 const getAllBlogs = async (_req: Request, res: Response) => {
   const blogs = await blogService.getAllBlogs();
@@ -7,7 +7,9 @@ const getAllBlogs = async (_req: Request, res: Response) => {
 };
 
 const addBlog = async (req: Request, res: Response) => {
-  const blog = await blogService.addBlog(req.body);
+  const user = await userService.getUserById(req.decodedToken.id);
+  if (!user) throw { status: 404, message: 'User not found' };
+  const blog = await blogService.addBlog(req.body, user);
   res.status(201).json(blog);
 };
 
@@ -16,6 +18,11 @@ const getBlogById = (req: Request, res: Response) => {
 };
 
 const deleteBlog = async (req: Request, res: Response) => {
+  if (req.decodedToken.id !== req.blog.get('userId'))
+    throw {
+      status: 403,
+      message: 'Cannot delete blog that does not belong to logged user',
+    };
   const isDeleted = await blogService.deleteBlog(req.blog);
   if (isDeleted) res.status(204).end();
 };

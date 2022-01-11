@@ -1,13 +1,19 @@
-import { Blog } from '../models';
+import { Blog, User } from '../models';
 import { NewBlog } from '../@types/blog';
 
 const getAllBlogs = async () => {
-  const blogs = await Blog.findAll();
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name'],
+    },
+  });
   return blogs;
 };
 
-const addBlog = async (blog: NewBlog) => {
-  const newBlog = await Blog.create(blog);
+const addBlog = async (blog: NewBlog, user: User) => {
+  const newBlog = await Blog.create({ ...blog, userId: user.get('id') });
   return newBlog;
 };
 

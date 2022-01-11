@@ -1,7 +1,8 @@
-import sequelize from '../utils/db/connection';
+import sequelize from '../utils/db';
 import { Model, DataTypes } from 'sequelize';
 
 class Blog extends Model {}
+
 Blog.init(
   {
     id: {
