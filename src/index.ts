@@ -1,9 +1,10 @@
-import config from './config/config';
+import config from './utils/config';
 import app from './app';
-import { connect } from './db/connection';
+import { connect } from './utils/db';
 
-connect().then(() => {
+(async () => {
+  await connect();
   app.listen(config.port, () => {
     console.log('app started');
   });
-});
+})();
