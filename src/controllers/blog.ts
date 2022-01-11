@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import blogService from '../services/blog';
+import { blogService } from '../services';
 
 const getAllBlogs = async (
   _req: Request,
@@ -23,11 +23,10 @@ const addBlog = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getBlogById = async (req: Request, res: Response, next: NextFunction) => {
+const getBlogById = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    if (isNaN(Number(id))) return next({ status: 400, message: 'Bad Request' });
-    const blog = await blogService.getBlogById(Number(id));
+    const blog = req.blog;
+    if (!blog) return next({ status: 404, message: 'Blog not found' });
     res.json(blog);
   } catch (error) {
     next(error);
@@ -36,10 +35,10 @@ const getBlogById = async (req: Request, res: Response, next: NextFunction) => {
 
 const deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    if (isNaN(Number(id))) return next({ status: 400, message: 'Bad Request' });
-    const isDeleted = await blogService.deleteBlog(Number(id));
-    res.json({ isDeleted });
+    const blog = req.blog;
+    if (!blog) return next({ status: 404, message: 'Blog not found' });
+    await blogService.deleteBlog(blog);
+    res.status(204).end();
   } catch (error) {
     next(error);
   }

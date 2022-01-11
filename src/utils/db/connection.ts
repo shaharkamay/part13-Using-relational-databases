@@ -13,10 +13,12 @@ const sequelize = new Sequelize(config.dbUrl, {
 const connect = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
+    console.log('Database connected successfully.');
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.log('Connecting database failed:', error);
+    return process.exit(1);
   }
+  return null;
 };
 
 export default sequelize;

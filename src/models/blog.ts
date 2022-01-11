@@ -1,4 +1,4 @@
-import sequelize from '../db/connection';
+import sequelize from '../utils/db/connection';
 import { Model, DataTypes } from 'sequelize';
 
 class Blog extends Model {}
@@ -34,6 +34,5 @@ Blog.init(
     modelName: 'blog',
   }
 );
-Blog.sync();
 
 export default Blog;

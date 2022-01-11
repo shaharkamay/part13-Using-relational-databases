@@ -1,5 +1,5 @@
-import Blog from '../models/blog';
-import { NewBlog } from '../types/blog';
+import { Blog } from '../models';
+import { NewBlog } from '../@types/blog';
 
 const getAllBlogs = async () => {
   const blogs = await Blog.findAll();
@@ -16,13 +16,9 @@ const getBlogById = async (id: number) => {
   return blog;
 };
 
-const deleteBlog = async (id: number): Promise<boolean> => {
-  const destroyedRows = await Blog.destroy({
-    where: {
-      id,
-    },
-  });
-  return destroyedRows > 0;
+const deleteBlog = async (blog: Blog): Promise<boolean> => {
+  await blog.destroy();
+  return true;
 };
 
 export default {
