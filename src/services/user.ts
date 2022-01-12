@@ -17,7 +17,19 @@ const addUser = async (user: NewUser) => {
 };
 
 const getUserById = async (id: number) => {
-  const user = await User.findByPk(id);
+  const user = await User.findByPk(id, {
+    attributes: {
+      exclude: ['id', 'createdAt', 'updatedAt', 'admin', 'disabled'],
+    },
+    include: [
+      {
+        model: Blog,
+        as: 'reading',
+        attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
+        through: { attributes: [] },
+      },
+    ],
+  });
   return user;
 };
 
