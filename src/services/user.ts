@@ -37,10 +37,38 @@ const updateUsername = async (
   return true;
 };
 
+const getUserByUsername = async (username: string) => {
+  const user = await User.findOne({
+    where: {
+      username,
+    },
+  });
+  return user;
+};
+
+const changeUserStatus = async (username: string, disabled: boolean) => {
+  const user = await getUserByUsername(username);
+  if (user) {
+    user.set('disabled', disabled);
+    await user.save();
+    return user;
+  }
+  return false;
+};
+
+const isAdmin = async (id: number): Promise<boolean> => {
+  const user = await getUserById(id);
+  if (!user) throw { status: 404, message: 'Not found' };
+  return user.get('admin') as boolean;
+};
+
 export default {
   getAllUsers,
   addUser,
   getUserById,
   deleteUser,
   updateUsername,
+  getUserByUsername,
+  changeUserStatus,
+  isAdmin,
 };

@@ -17,6 +17,10 @@ const login = async (req: Request, res: Response) => {
     throw { status: 401, message: 'invalid username or password' };
   }
 
+  if (user.get('disabled')) {
+    throw { status: 401, message: 'Account disabled, please contact admin' };
+  }
+
   const userForToken = {
     username: user.get('username'),
     id: user.get('id'),

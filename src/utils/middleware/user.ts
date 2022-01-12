@@ -11,4 +11,16 @@ const userFinder = async (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-export { userFinder };
+const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.decodedToken.id)
+    throw {
+      status: 403,
+      message: 'Cannot delete blog that does not belong to logged user',
+    };
+
+  const isAdmin = await userService.isAdmin(req.decodedToken.id);
+  req.isAdmin = isAdmin;
+  next();
+};
+
+export { userFinder, isAdmin };
