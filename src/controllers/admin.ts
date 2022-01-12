@@ -7,7 +7,7 @@ const changeUserStatus = async (req: Request, res: Response) => {
 
   const { username } = req.params;
   const { disabled } = req.body;
-  if (!username || disabled === undefined)
+  if (!username || disabled == undefined)
     throw { status: 400, message: 'Bad request' };
 
   const user = await userService.changeUserStatus(username, disabled);
