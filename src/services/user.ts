@@ -16,7 +16,13 @@ const addUser = async (user: NewUser) => {
   return newUser;
 };
 
-const getUserById = async (id: number) => {
+const getUserById = async (id: number, read: boolean | null = null) => {
+  const where = {} as { read: boolean };
+
+  if (read != null) {
+    where.read = read;
+  }
+
   const user = await User.findByPk(id, {
     attributes: {
       exclude: ['id', 'createdAt', 'updatedAt', 'admin', 'disabled'],
@@ -26,7 +32,7 @@ const getUserById = async (id: number) => {
         model: Blog,
         as: 'reading',
         attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
-        through: { attributes: [] },
+        through: { attributes: ['read', 'id'], where },
       },
     ],
   });
