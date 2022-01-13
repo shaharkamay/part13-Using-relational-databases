@@ -28,8 +28,8 @@ const getAllBlogs = async (search: string | null = null) => {
   return blogs;
 };
 
-const addBlog = async (blog: NewBlog, user: User) => {
-  const newBlog = await Blog.create({ ...blog, userId: user.get('id') });
+const addBlog = async (blog: NewBlog, userId: number) => {
+  const newBlog = await Blog.create({ ...blog, userId });
   return newBlog;
 };
 

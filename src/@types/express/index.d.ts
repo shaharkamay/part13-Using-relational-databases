@@ -7,6 +7,7 @@ declare global {
       blog: Blog;
       user: User;
       decodedToken: JwtPayload;
+      isAdmin: boolean;
     }
   }
 }

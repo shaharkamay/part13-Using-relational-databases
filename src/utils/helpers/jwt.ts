@@ -1,20 +1,19 @@
-import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
 
-const tokenExtractor = (req: Request, _res: Response, next: NextFunction) => {
-  const authorization = req.get('authorization');
+const tokenExtractor = (authorization: string | undefined) => {
   if (!(authorization && authorization.toLowerCase().startsWith('bearer ')))
     throw { status: 401, message: 'Token missing' };
+  let decodedToken = null;
   try {
-    req.decodedToken = jwt.verify(
+    decodedToken = jwt.verify(
       authorization.substring(7),
       config.secret
     ) as JwtPayload;
+    return decodedToken;
   } catch (error) {
     throw { status: 401, message: 'Invalid token' };
   }
-  next();
 };
 
 export { tokenExtractor };
