@@ -4,12 +4,11 @@ import {
   addReadingList,
   updateReadByBlogId,
 } from '../controllers/reading-list';
-import { tokenExtractor } from '../utils/middleware/jwt';
 
 const router = express.Router();
 
-router.post('/', tokenExtractor, addReadingList);
+router.post('/', addReadingList);
 
-router.put('/:id', tokenExtractor, updateReadByBlogId);
+router.put('/:id', updateReadByBlogId);
 
 export default router;

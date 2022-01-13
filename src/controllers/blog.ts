@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { blogService, userService } from '../services';
+import { blogService } from '../services';
 
 const getAllBlogs = async (req: Request, res: Response) => {
   const { search } = req.query;
@@ -8,9 +8,7 @@ const getAllBlogs = async (req: Request, res: Response) => {
 };
 
 const addBlog = async (req: Request, res: Response) => {
-  const user = await userService.getUserById(req.decodedToken.id);
-  if (!user) throw { status: 404, message: 'User not found' };
-  const blog = await blogService.addBlog(req.body, user);
+  const blog = await blogService.addBlog(req.body, req.decodedToken.id);
   res.status(201).json(blog);
 };
 

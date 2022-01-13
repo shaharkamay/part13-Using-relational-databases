@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { userService } from '../../services';
+import { sessionService, userService } from '../../services';
+import { tokenExtractor } from '../helpers/jwt';
 
-const userFinder = async (req: Request, res: Response, next: NextFunction) => {
+const userFinder = async (req: Request, _res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { read: readQuery } = req.query;
 
@@ -17,7 +18,7 @@ const userFinder = async (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+const isAdmin = async (req: Request, _res: Response, next: NextFunction) => {
   if (!req.decodedToken.id)
     throw {
       status: 403,
@@ -29,4 +30,24 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-export { userFinder, isAdmin };
+const isSessionActive = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  const authorization = req.get('authorization');
+  if (authorization == null) throw { status: 401, message: 'Token missing' };
+
+  req.decodedToken = tokenExtractor(authorization);
+
+  const session = await sessionService.getSessionByUserId(req.decodedToken.id);
+  if (session == null) throw { status: 401, message: 'Unauthorized' };
+
+  if (session.get('token') !== authorization.substring(7)) {
+    await sessionService.deleteSession(req.decodedToken.id);
+    throw { status: 401, message: 'Unmatched tokens' };
+  }
+  next();
+};
+
+export { userFinder, isAdmin, isSessionActive };
